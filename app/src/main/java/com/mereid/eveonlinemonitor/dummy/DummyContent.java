@@ -2,6 +2,8 @@ package com.mereid.eveonlinemonitor.dummy;
 
 import android.os.AsyncTask;
 
+import com.mereid.eveonlinemonitor.Constants;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -82,11 +84,31 @@ public class DummyContent {
         public final String id;
         public final String content;
         public final String details;
+        public String isk;
 
         public DummyItem(String name, String characterId, String corp) {
             this.id = /*"Character: " +*/ name;
             this.details = /*"Corporation: " +*/ characterId;
             this.content = /*"Character id: " +*/ corp;
+            this.isk = "";
+        }
+
+        public void SetIsk(String iskRetrieved) {
+            int third = 0;
+            for(int i = iskRetrieved.length()-3; i>0; i--)
+            {
+
+                if (third == 2)
+                {
+                    iskRetrieved = iskRetrieved.subSequence(0,i) + "," + iskRetrieved.subSequence(i, iskRetrieved.length());
+                    third = 0;
+                }
+                else
+                {
+                    third++;
+                }
+            }
+            this.isk = iskRetrieved + " isk";
         }
 
         @Override
@@ -101,7 +123,7 @@ public class DummyContent {
 
         @Override
         protected String doInBackground(String... params)  {
-            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID=5332468&vCode=ukapJVh2jLrWgKkuHnHO7Db9Lz4rbZx0AjzI7G1IOQlcx8hQiAD15rhHezrfj4xR";
+            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID="+ Constants.keyId +"&vCode="+Constants.vCode;
             URL url = null;
             int response = -1;
             try {
