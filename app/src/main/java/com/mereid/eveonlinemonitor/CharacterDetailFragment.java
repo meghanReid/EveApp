@@ -1,7 +1,10 @@
 package com.mereid.eveonlinemonitor;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mereid.eveonlinemonitor.dummy.DummyContent;
@@ -67,13 +71,23 @@ public class CharacterDetailFragment extends Fragment {
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            ImageView charImage;
             if (appBarLayout != null) {
                 appBarLayout.setTitle(mItem.id);
+                charImage = (ImageView) appBarLayout.findViewById(R.id.character_image);
+                try {
+                    new ImageData(charImage).execute(mItem.details, "1024").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
 
             String isk = "0.00";
             try {
                 isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -101,6 +115,8 @@ public class CharacterDetailFragment extends Fragment {
 
         return rootView;
     }
+
+
 
     private class CharacterData extends AsyncTask<String, Void, String> {
 
@@ -180,5 +196,28 @@ public class CharacterDetailFragment extends Fragment {
         protected void onProgressUpdate(Void... values) {}
     }
 
+    private class ImageData extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
 
+        public ImageData(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... params) {
+            String characterId = params[0];
+            String size = params[1];
+            String url = "https://image.eveonline.com/Character/"+characterId+"_"+size+".jpg";
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(url).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
 }
