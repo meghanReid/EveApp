@@ -48,12 +48,16 @@ public class DummyContent {
     public void Init()
     {
         if (initialized == 0) {
-            try {
-                new LongOperation().execute("").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            for (int i = 0; i < Constants.userData.size(); i++) {
+                String vCode = Constants.userData.get(i).first;
+                String keyID = Constants.userData.get(i).second;
+                try {
+                    new LongOperation().execute(keyID, vCode, Integer.toString(i)).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
             initialized = 1;
         }
@@ -73,8 +77,8 @@ public class DummyContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    private DummyItem createDummyItem(String name, String id, String corporation) {
-        return new DummyItem(name, id, corporation);
+    private DummyItem createDummyItem(String name, String id, String corporation, int index) {
+        return new DummyItem(name, id, corporation, index);
     }
 
     /**
@@ -85,17 +89,19 @@ public class DummyContent {
         public final String content;
         public final String details;
         public String isk;
+        public int userDataIndex;
 
-        public DummyItem(String name, String characterId, String corp) {
+        public DummyItem(String name, String characterId, String corp, int index) {
             this.id = /*"Character: " +*/ name;
             this.details = /*"Corporation: " +*/ characterId;
             this.content = /*"Character id: " +*/ corp;
+            this.userDataIndex = index;
             this.isk = "";
         }
 
         public void SetIsk(String iskRetrieved) {
             int third = 0;
-            for(int i = iskRetrieved.length()-3; i>0; i--)
+            for(int i = iskRetrieved.length()-4; i>0; i--)
             {
 
                 if (third == 2)
@@ -123,7 +129,8 @@ public class DummyContent {
 
         @Override
         protected String doInBackground(String... params)  {
-            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID="+ Constants.keyId +"&vCode="+Constants.vCode;
+            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID="+ params[0] +"&vCode="+params[1];
+            int index = Integer.parseInt(params[2]);
             URL url = null;
             int response = -1;
             try {
@@ -158,7 +165,7 @@ public class DummyContent {
                                 String name = character.getAttribute("name");
                                 String characterId = character.getAttribute("characterID");
                                 String corpName = character.getAttribute("corporationName");
-                                addItem(createDummyItem(name, characterId, corpName));
+                                addItem(createDummyItem(name, characterId, corpName, index));
                             }
 
                         } catch (SAXException e) {

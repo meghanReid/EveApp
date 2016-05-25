@@ -73,7 +73,7 @@ public class CharacterDetailFragment extends Fragment {
 
             String isk = "0.00";
             try {
-                isk = new CharacterData().execute(mItem.details, "balance").get();
+                isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -108,7 +108,8 @@ public class CharacterDetailFragment extends Fragment {
         protected String doInBackground(String... params)  {
             String httpValue = params[0];
             String attrValue = params[1];
-            String myurl = "https://api.eveonline.com//char/AccountBalance.xml.aspx?keyID="+ Constants.keyId +"&vCode="+ Constants.vCode+"&characterID="+httpValue;
+            int index = Integer.parseInt(params[2]);
+            String myurl = "https://api.eveonline.com//char/AccountBalance.xml.aspx?keyID="+ Constants.userData.get(index).second +"&vCode="+ Constants.userData.get(index).first + "&characterID="+httpValue;
             URL url = null;
             int response = -1;
             String value = "";
