@@ -2,6 +2,10 @@ package com.mereid.eveonlinemonitor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +14,30 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import javax.xml.parsers.*;
 
 
 import com.mereid.eveonlinemonitor.dummy.DummyContent;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -36,6 +56,8 @@ public class CharacterListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +69,18 @@ public class CharacterListActivity extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+            public void onClick(View v) {
+//                ConnectivityManager connMgr = (ConnectivityManager)
+//                        getSystemService(Context.CONNECTIVITY_SERVICE);
+//                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//                if (networkInfo != null && networkInfo.isConnected()) {
+//
+//                    new LongOperation().execute("");
+//
+//                } else {
+//                    // display error
+//                }
+            }});
 
         View recyclerView = findViewById(R.id.character_list);
         assert recyclerView != null;
@@ -68,7 +96,9 @@ public class CharacterListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        DummyContent dummyContent = new DummyContent();
+        dummyContent.Init();
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(dummyContent.ITEMS));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -91,7 +121,9 @@ public class CharacterListActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).id);
+            holder.mIdView.setTextColor(Color.WHITE);
             holder.mContentView.setText(mValues.get(position).content);
+            holder.mContentView.setTextColor(Color.WHITE);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,4 +171,82 @@ public class CharacterListActivity extends AppCompatActivity {
             }
         }
     }
+
+//    private class LongOperation extends AsyncTask<String, Void, String> {
+//
+//
+//
+//        @Override
+//        protected String doInBackground(String... params)  {
+//            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID=5332468&vCode=ukapJVh2jLrWgKkuHnHO7Db9Lz4rbZx0AjzI7G1IOQlcx8hQiAD15rhHezrfj4xR";
+//            URL url = null;
+//            int response = -1;
+//            try {
+//                url = new URL(myurl);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setReadTimeout(10000 /* milliseconds */);
+//                conn.setConnectTimeout(15000 /* milliseconds */);
+//                try {
+//                    conn.setRequestMethod("GET");
+//                } catch (ProtocolException e) {
+//                    e.printStackTrace();
+//                }
+//                conn.setDoInput(true);
+//                // Starts the query
+//                conn.connect();
+//                response = conn.getResponseCode();
+//                if(response == 200){
+//                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//
+//                    // use the factory to create a documentbuilder
+//                    DocumentBuilder builder = null;
+//                    InputStream content = conn.getInputStream();
+//                    try {
+//                        builder = factory.newDocumentBuilder();
+//                        try {
+//                            Document doc = builder.parse(content);
+//                            // get the first element
+//                            Element element = doc.getDocumentElement();
+//                            NodeList list = element.getElementsByTagName("row");
+//                            for (int i = 0; i<list.getLength(); i++) {
+//                                Element character = (Element) list.item(i);
+//                                String name = character.getAttribute("name");
+//                                String characterId = character.getAttribute("characterID");
+//                                String corpName = character.getAttribute("corporationName");
+//                            }
+//
+//                        } catch (SAXException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } catch (ParserConfigurationException e) {
+//                        e.printStackTrace();
+//                    }
+////                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+////                    String line;
+////                    while((line = reader.readLine()) != null){
+////                        builder.append(line);
+////                    }
+//                } else {
+//                }
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            return "Executed";
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {}
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {}
+//    }
+
 }

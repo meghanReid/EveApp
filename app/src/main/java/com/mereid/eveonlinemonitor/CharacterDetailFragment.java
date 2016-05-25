@@ -1,6 +1,7 @@
 package com.mereid.eveonlinemonitor;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,7 +50,7 @@ public class CharacterDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.id);
             }
         }
     }
@@ -61,7 +62,9 @@ public class CharacterDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.character_detail)).setText(mItem.details);
+            TextView rootViewTextView = (TextView) rootView.findViewById(R.id.character_detail);
+            rootViewTextView.setText(mItem.content);
+            rootViewTextView.setTextColor(Color.WHITE);
         }
 
         return rootView;
