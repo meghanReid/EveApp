@@ -69,17 +69,10 @@ public class CharacterListActivity extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-//                ConnectivityManager connMgr = (ConnectivityManager)
-//                        getSystemService(Context.CONNECTIVITY_SERVICE);
-//                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//                if (networkInfo != null && networkInfo.isConnected()) {
-//
-//                    new LongOperation().execute("");
-//
-//                } else {
-//                    // display error
-//                }
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }});
 
         View recyclerView = findViewById(R.id.character_list);
