@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -67,7 +68,8 @@ public class CharacterDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            String key = getArguments().getString(ARG_ITEM_ID);
+            mItem = DummyContent.ITEM_MAP.get(key);
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -75,12 +77,18 @@ public class CharacterDetailFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(mItem.id);
                 charImage = (ImageView) appBarLayout.findViewById(R.id.character_image);
-                try {
-                    new ImageData(charImage).execute(mItem.details, "1024").get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+                if (mItem.charBitmap == null) {
+                    try {
+                        new ImageData(charImage, key).execute(mItem.details, "1024").get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    charImage.setImageBitmap(mItem.charBitmap);
                 }
             }
 
@@ -198,9 +206,11 @@ public class CharacterDetailFragment extends Fragment {
 
     private class ImageData extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+        String key;
 
-        public ImageData(ImageView bmImage) {
+        public ImageData(ImageView bmImage, String key) {
             this.bmImage = bmImage;
+            this.key = key;
         }
 
         protected Bitmap doInBackground(String... params) {
@@ -217,6 +227,10 @@ public class CharacterDetailFragment extends Fragment {
         }
 
         protected void onPostExecute(Bitmap result) {
+
+            DummyContent.DummyItem newItem = DummyContent.ITEM_MAP.get(key);
+            newItem.charBitmap = result;
+            DummyContent.ITEM_MAP.put(key, mItem);
             bmImage.setImageBitmap(result);
         }
     }

@@ -1,6 +1,8 @@
 package com.mereid.eveonlinemonitor.dummy;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 
 import com.mereid.eveonlinemonitor.Constants;
 
@@ -90,6 +92,7 @@ public class DummyContent {
         public final String details;
         public String isk;
         public int userDataIndex;
+        public Bitmap charBitmap;
 
         public DummyItem(String name, String characterId, String corp, int index) {
             this.id = /*"Character: " +*/ name;
@@ -97,6 +100,7 @@ public class DummyContent {
             this.content = /*"Character id: " +*/ corp;
             this.userDataIndex = index;
             this.isk = "";
+            charBitmap = null;
         }
 
         public void SetIsk(String iskRetrieved) {
@@ -115,6 +119,10 @@ public class DummyContent {
                 }
             }
             this.isk = iskRetrieved + " isk";
+        }
+
+        public void SetBitmap(Bitmap bitmap) {
+            this.charBitmap = bitmap;
         }
 
         @Override
