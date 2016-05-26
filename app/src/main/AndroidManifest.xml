@@ -30,7 +30,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mereid.eveonlinemonitor.CharacterListActivity" />
         </activity>
-        <activity android:name=".Authenticate"></activity>
+        <activity android:name=".Authenticate" />
+        <activity
+            android:name=".dummy.SolarSystemListActivity"
+            android:label="@string/title_solarsystem_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".dummy.SolarSystemDetailActivity"
+            android:label="@string/title_solarsystem_detail"
+            android:parentActivityName=".dummy.SolarSystemListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mereid.eveonlinemonitor.dummy.SolarSystemListActivity" />
+        </activity>
     </application>
 
 </manifest>

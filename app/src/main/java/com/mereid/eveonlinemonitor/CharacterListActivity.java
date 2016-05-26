@@ -18,11 +18,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import javax.xml.parsers.*;
 
 
 import com.mereid.eveonlinemonitor.dummy.DummyContent;
+import com.mereid.eveonlinemonitor.dummy.SolarSystemDetailFragment;
+import com.mereid.eveonlinemonitor.dummy.SolarSystemListActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,6 +77,14 @@ public class CharacterListActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }});
+        Button button = (Button) findViewById(R.id.pvp_locator);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, SolarSystemListActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
         View recyclerView = findViewById(R.id.character_list);
         assert recyclerView != null;
