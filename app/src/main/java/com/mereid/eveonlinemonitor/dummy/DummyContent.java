@@ -1,6 +1,7 @@
 package com.mereid.eveonlinemonitor.dummy;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -79,8 +80,8 @@ public class DummyContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    private DummyItem createDummyItem(String name, String id, String corporation, int index) {
-        return new DummyItem(name, id, corporation, index);
+    private DummyItem createDummyItem(String name, String id, String corporation, int index, Bitmap bitmap) {
+        return new DummyItem(name, id, corporation, index, bitmap);
     }
 
     /**
@@ -94,13 +95,13 @@ public class DummyContent {
         public int userDataIndex;
         public Bitmap charBitmap;
 
-        public DummyItem(String name, String characterId, String corp, int index) {
+        public DummyItem(String name, String characterId, String corp, int index, Bitmap bitmap) {
             this.id = /*"Character: " +*/ name;
             this.details = /*"Corporation: " +*/ characterId;
             this.content = /*"Character id: " +*/ corp;
             this.userDataIndex = index;
             this.isk = "";
-            charBitmap = null;
+            charBitmap = bitmap;
         }
 
         public void SetIsk(String iskRetrieved) {
@@ -133,7 +134,17 @@ public class DummyContent {
 
     private class LongOperation extends AsyncTask<String, Void, String> {
 
-
+        private Bitmap getBitmap(String characterId)
+        {
+            String url = "https://image.eveonline.com/Character/"+characterId+"_"+"1024.jpg";
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(url).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+            }
+            return mIcon11;
+        }
 
         @Override
         protected String doInBackground(String... params)  {
@@ -173,7 +184,8 @@ public class DummyContent {
                                 String name = character.getAttribute("name");
                                 String characterId = character.getAttribute("characterID");
                                 String corpName = character.getAttribute("corporationName");
-                                addItem(createDummyItem(name, characterId, corpName, index));
+                                Bitmap bitmap = getBitmap(characterId);
+                                addItem(createDummyItem(name, characterId, corpName, index, bitmap));
                             }
 
                         } catch (SAXException e) {
@@ -210,4 +222,6 @@ public class DummyContent {
         @Override
         protected void onProgressUpdate(Void... values) {}
     }
+
+
 }
