@@ -77,7 +77,7 @@ public class KillContent {
         SYSTEM_ITEM_MAP.put(item.systemID, item);
     }
 
-    private SolarSystem createSolarSystem(String systemID, int shipKills, int podKills, String name, int securityStatus) {
+    private SolarSystem createSolarSystem(String systemID, int shipKills, int podKills, String name, String securityStatus) {
         return new SolarSystem(systemID, shipKills, podKills, name, securityStatus);
     }
 
@@ -89,9 +89,9 @@ public class KillContent {
         public final int shipKills;
         public final int podKills;
         public final String name;
-        public final int securityStatus;
+        public final String securityStatus;
 
-        public SolarSystem(String systemID, int shipKills, int podKills, String name, int securityStatus) {
+        public SolarSystem(String systemID, int shipKills, int podKills, String name, String securityStatus) {
             this.systemID = systemID;
             this.shipKills = shipKills;
             this.podKills = podKills;
@@ -159,7 +159,7 @@ public class KillContent {
 //                                String corpName = character.getAttribute("corporationName");
 //                                Bitmap bitmap = getBitmap(characterId);
 ////                                addItem(createSolarSystem(systemID, shipKills, podKills, name, securityStatus));
-                              addItem(createSolarSystem("testID", 5, 12, "testname", -10));
+                              addItem(createSolarSystem("testID", 5, 12, "testname", "-2.998"));
 
 //                            }
 //

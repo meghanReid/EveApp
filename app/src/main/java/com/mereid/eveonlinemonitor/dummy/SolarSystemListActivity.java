@@ -93,8 +93,8 @@ public class SolarSystemListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).name);
-            holder.mContentView.setText("Ship: " + mValues.get(position).shipKills + "  Pods: "+mValues.get(position).podKills);
+            holder.mIdView.setText(mValues.get(position).name + " ("+mValues.get(position).securityStatus+")");
+            holder.mContentView.setText("Ships: " + mValues.get(position).shipKills + "  Pods: "+mValues.get(position).podKills);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
