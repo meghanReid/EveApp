@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ProgressBar;
 
 import com.mereid.eveonlinemonitor.dummy.DummyContent;
 import com.mereid.eveonlinemonitor.dummy.dummy.KillContent;
@@ -38,7 +39,8 @@ public class Splash extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-
+        ProgressBar spinner;
+        spinner = (ProgressBar)findViewById(R.id.progressBarSplash);
         DummyContent dummy = new DummyContent();
         new LongOperation(dummy).execute("");
     }
@@ -162,7 +164,7 @@ public class Splash extends Activity {
                                     String corpName = character.getAttribute("corporationName");
                                     Bitmap bitmap = getBitmap(characterId);
                                     String isk = getValue(characterId, "balance", i);
-                                    dummy.addItem(dummy.createDummyItem(name, characterId, corpName, index, bitmap, isk));
+                                    dummy.addItem(dummy.createDummyItem(name, characterId, corpName, index, bitmap, DummyContent.ParseIsk(isk)));
                                 }
 
                             } catch (SAXException e) {

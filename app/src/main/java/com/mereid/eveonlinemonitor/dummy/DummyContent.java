@@ -69,6 +69,24 @@ public class DummyContent {
         return new DummyItem(name, id, corporation, index, bitmap, isk);
     }
 
+    public static String ParseIsk(String iskRetrieved) {
+        int third = 0;
+        for(int i = iskRetrieved.length()-4; i>0; i--)
+        {
+
+            if (third == 2)
+            {
+                iskRetrieved = iskRetrieved.subSequence(0,i) + "," + iskRetrieved.subSequence(i, iskRetrieved.length());
+                third = 0;
+            }
+            else
+            {
+                third++;
+            }
+        }
+        return iskRetrieved + " isk";
+    }
+
     /**
      * A dummy item representing a piece of content.
      */
@@ -88,24 +106,6 @@ public class DummyContent {
             this.userDataIndex = index;
             this.isk = isk;
             this.charBitmap = bitmap;
-        }
-
-        public void SetIsk(String iskRetrieved) {
-            int third = 0;
-            for(int i = iskRetrieved.length()-4; i>0; i--)
-            {
-
-                if (third == 2)
-                {
-                    iskRetrieved = iskRetrieved.subSequence(0,i) + "," + iskRetrieved.subSequence(i, iskRetrieved.length());
-                    third = 0;
-                }
-                else
-                {
-                    third++;
-                }
-            }
-            this.isk = iskRetrieved + " isk";
         }
 
         public void SetBitmap(Bitmap bitmap) {

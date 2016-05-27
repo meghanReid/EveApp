@@ -93,16 +93,16 @@ public class CharacterDetailFragment extends Fragment {
             }
 
             if (mItem.isk.length() == 0) {
-                String isk = "0.00";
-                try {
-                    isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                mItem.SetIsk(isk);
+                String isk = "Data not available";
+//                try {
+//                    isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+//                mItem.SetIsk(isk);
             }
         }
     }
@@ -127,7 +127,7 @@ public class CharacterDetailFragment extends Fragment {
     }
 
 
-
+// Use this to get isk if desired
     private class CharacterData extends AsyncTask<String, Void, String> {
 
         @Override
