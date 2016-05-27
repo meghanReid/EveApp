@@ -26,6 +26,7 @@ import javax.xml.parsers.*;
 import com.mereid.eveonlinemonitor.dummy.DummyContent;
 import com.mereid.eveonlinemonitor.dummy.SolarSystemDetailFragment;
 import com.mereid.eveonlinemonitor.dummy.SolarSystemListActivity;
+import com.mereid.eveonlinemonitor.dummy.dummy.KillContent;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -102,6 +103,8 @@ public class CharacterListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         DummyContent dummyContent = new DummyContent();
         dummyContent.Init();
+        KillContent killContent = new KillContent();
+        killContent.Init();
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(dummyContent.ITEMS));
     }
 

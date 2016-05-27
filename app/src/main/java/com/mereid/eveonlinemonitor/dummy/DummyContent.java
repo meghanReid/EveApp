@@ -62,7 +62,6 @@ public class DummyContent {
                     e.printStackTrace();
                 }
             }
-            initialized = 1;
         }
     };
 
@@ -213,7 +212,7 @@ public class DummyContent {
         @Override
         protected void onPostExecute(String s)
         {
-
+            initialized = 1;
         }
 
         @Override

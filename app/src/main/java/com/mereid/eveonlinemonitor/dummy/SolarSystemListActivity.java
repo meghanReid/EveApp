@@ -20,6 +20,7 @@ import com.mereid.eveonlinemonitor.R;
 import com.mereid.eveonlinemonitor.dummy.dummy.KillContent;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An activity representing a list of SolarSystems. This activity
@@ -69,8 +70,19 @@ public class SolarSystemListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        KillContent killContent = new KillContent();
-        killContent.Init();
+        int secondsWaited = 60;
+        // Add error message or timer here
+        while (KillContent.initializedSystem == 0)
+        {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (secondsWaited == 0)
+                break;
+            secondsWaited--;
+        }
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(KillContent.SYSTEM_ITEMS));
     }
 

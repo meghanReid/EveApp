@@ -58,16 +58,7 @@ public class KillContent {
     public void Init()
     {
         if (initializedSystem == 0) {
-            try {
-                new LongOperation().execute("").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-
-            initializedSystem = 1;
+            new LongOperation().execute("");
         }
     };
 
@@ -275,7 +266,7 @@ public class KillContent {
         @Override
         protected void onPostExecute(String s)
         {
-
+            initializedSystem = 1;
         }
 
         @Override
