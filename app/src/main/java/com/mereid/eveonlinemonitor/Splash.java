@@ -134,10 +134,6 @@ public class Splash extends Activity {
             dummy.initialized = 1;
             KillContent killContent = new KillContent();
             killContent.Init();
-            for (int i = 0; i<DummyContent.ITEMS.size(); i++)
-            {
-
-            }
             Intent mainClass = new Intent(Splash.this, CharacterListActivity.class);
             Splash.this.startActivity(mainClass);
             Splash.this.finish();

@@ -108,9 +108,9 @@ public class KillContent {
 
         public class SystemData {
             public final String name;
-            public final String securityStatus;
+            public final double securityStatus;
 
-            public SystemData(String name, String securityStatus) {
+            public SystemData(String name, double securityStatus) {
                 this.name = name;
                 this.securityStatus = securityStatus;
             }
@@ -161,7 +161,7 @@ public class KillContent {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            data = new SystemData(name, parseSecStatus(status));
+            data = new SystemData(name, status);
             return data;
         }
 
@@ -218,7 +218,7 @@ public class KillContent {
                                 String shipKill = system.getAttribute("shipKills");
                                 int shipKills = Integer.parseInt(shipKill);
                                 int systemId = Integer.parseInt(system.getAttribute("solarSystemID"));
-                                if (shipKills < 5) continue;
+                                if (shipKills < 1) continue;
                                 idKills.put(systemId, shipKills);
                                 idPodKills.put(systemId, Integer.parseInt(system.getAttribute("podKills")));
 //                                String characterId = character.getAttribute("characterID");
@@ -236,7 +236,8 @@ public class KillContent {
                                 Map.Entry pair = (Map.Entry)it.next();
                                 String systemId = pair.getKey().toString();
                                 SystemData data = getSystemData(systemId);
-                                addItem(createSolarSystem(systemId, Integer.parseInt(pair.getValue().toString()), idPodKills.get(Integer.parseInt(systemId)), data.name, data.securityStatus));
+                                if (data.securityStatus > 0.45) continue;
+                                addItem(createSolarSystem(systemId, Integer.parseInt(pair.getValue().toString()), idPodKills.get(Integer.parseInt(systemId)), data.name, parseSecStatus(data.securityStatus)));
                                 it.remove();
                                 if (j == 24) break;
                             }
