@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class Constants {
     public static final List<Pair<String, String>> userData = new ArrayList<Pair<String, String>>();
-    public static final int SPLASH_DISPLAY_LENGTH = 1000;
+    public static final int SPLASH_DISPLAY_LENGTH = 5000;
     static
     {
         userData.add(new Pair("ukapJVh2jLrWgKkuHnHO7Db9Lz4rbZx0AjzI7G1IOQlcx8hQiAD15rhHezrfj4xR", "5332468"));

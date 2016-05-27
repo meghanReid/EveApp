@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An activity representing a list of Characters. This activity
@@ -79,8 +80,8 @@ public class CharacterListActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }});
         Button button = (Button) findViewById(R.id.pvp_locator);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, SolarSystemListActivity.class);
                 context.startActivity(intent);
@@ -101,11 +102,20 @@ public class CharacterListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        DummyContent dummyContent = new DummyContent();
-        dummyContent.Init();
-        KillContent killContent = new KillContent();
-        killContent.Init();
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(dummyContent.ITEMS));
+        int secondsWaited = 60;
+        // Add error message or timer here
+        while (DummyContent.initialized == 0)
+        {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (secondsWaited == 0)
+                break;
+            secondsWaited--;
+        }
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 
     public class SimpleItemRecyclerViewAdapter
