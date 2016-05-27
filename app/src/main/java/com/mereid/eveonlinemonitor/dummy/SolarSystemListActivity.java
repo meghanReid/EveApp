@@ -101,7 +101,7 @@ public class SolarSystemListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(SolarSystemDetailFragment.ARG_ITEM_ID, holder.mItem.name);
+                        arguments.putString(SolarSystemDetailFragment.ARG_ITEM_ID, holder.mItem.systemID);
                         SolarSystemDetailFragment fragment = new SolarSystemDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -110,7 +110,7 @@ public class SolarSystemListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, SolarSystemDetailActivity.class);
-                        intent.putExtra(SolarSystemDetailFragment.ARG_ITEM_ID, holder.mItem.name);
+                        intent.putExtra(SolarSystemDetailFragment.ARG_ITEM_ID, holder.mItem.systemID);
 
                         context.startActivity(intent);
                     }

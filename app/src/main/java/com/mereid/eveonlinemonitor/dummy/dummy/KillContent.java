@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
+import com.mereid.eveonlinemonitor.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -15,10 +19,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -107,6 +115,65 @@ public class KillContent {
 
     private class LongOperation extends AsyncTask<String, Void, String> {
 
+        public class SystemData {
+            public final String name;
+            public final String securityStatus;
+
+            public SystemData(String name, String securityStatus) {
+                this.name = name;
+                this.securityStatus = securityStatus;
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+        }
+
+        private String parseSecStatus(double secStatus)
+        {
+            return String.format( "%.2f", secStatus );
+        }
+
+        private SystemData getSystemData(String systemID)
+        {
+            SystemData data;
+            String name = "";
+            double status = 0.00;
+            String myurl = "https://crest-tq.eveonline.com/solarsystems/"+systemID+"/";
+            URL url = null;
+            int response = -1;
+            try {
+                url = new URL(myurl);
+                String result;
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                try {
+                    conn.setRequestMethod("GET");
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                }
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                response = conn.getResponseCode();
+                if(response == 200){
+                    InputStream stream = conn.getInputStream();
+                    result = Constants.convertStreamToString(stream);
+                    JSONObject systemObject = new JSONObject(result);
+                    name = systemObject.getString("name");
+                    status = systemObject.getDouble("securityStatus");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            data = new SystemData(name, parseSecStatus(status));
+            return data;
+        }
+
         private Bitmap getBitmap(String characterId)
         {
             String url = "https://image.eveonline.com/Character/"+characterId+"_"+"1024.jpg";
@@ -121,66 +188,86 @@ public class KillContent {
 
         @Override
         protected String doInBackground(String... params)  {
-//            String myurl = "https://api.eveonline.com//account/Characters.xml.aspx?keyID="+ params[0] +"&vCode="+params[1];
-//            int index = Integer.parseInt(params[2]);
-//            URL url = null;
-//            int response = -1;
-//            try {
-//                url = new URL(myurl);
-//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                conn.setReadTimeout(10000 /* milliseconds */);
-//                conn.setConnectTimeout(15000 /* milliseconds */);
-//                try {
-//                    conn.setRequestMethod("GET");
-//                } catch (ProtocolException e) {
-//                    e.printStackTrace();
-//                }
-//                conn.setDoInput(true);
-//                // Starts the query
-//                conn.connect();
-//                response = conn.getResponseCode();
-//                if(response == 200){
-//                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//
-//                    // use the factory to create a documentbuilder
-//                    DocumentBuilder builder = null;
-//                    InputStream content = conn.getInputStream();
-//                    try {
-//                        builder = factory.newDocumentBuilder();
-//                        try {
-//                            Document doc = builder.parse(content);
-//                            // get the first element
-//                            Element element = doc.getDocumentElement();
-//                            NodeList list = element.getElementsByTagName("row");
-//                            for (int i = 0; i<list.getLength(); i++) {
-//                                Element character = (Element) list.item(i);
-//                                String name = character.getAttribute("name");
+            String myurl = "https://api.eveonline.com/map/kills.xml.aspx";
+            URL url = null;
+            int response = -1;
+            try {
+                url = new URL(myurl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                try {
+                    conn.setRequestMethod("GET");
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                }
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                response = conn.getResponseCode();
+                if(response == 200){
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+                    // use the factory to create a documentbuilder
+                    DocumentBuilder builder = null;
+                    InputStream content = conn.getInputStream();
+                    try {
+                        builder = factory.newDocumentBuilder();
+                        try {
+                            Document doc = builder.parse(content);
+                            // get the first element
+                            Element element = doc.getDocumentElement();
+                            NodeList list = element.getElementsByTagName("row");
+                            Map<Integer, Integer> idKills = new HashMap<Integer, Integer>();
+                            Map<Integer, Integer> idPodKills = new HashMap<Integer, Integer>();
+
+                            for (int i = 0; i<list.getLength(); i++) {
+
+                                Element system = (Element) list.item(i);
+                                String shipKill = system.getAttribute("shipKills");
+                                int shipKills = Integer.parseInt(shipKill);
+                                int systemId = Integer.parseInt(system.getAttribute("solarSystemID"));
+                                if (shipKills < 5) continue;
+                                idKills.put(systemId, shipKills);
+                                idPodKills.put(systemId, Integer.parseInt(system.getAttribute("podKills")));
 //                                String characterId = character.getAttribute("characterID");
 //                                String corpName = character.getAttribute("corporationName");
 //                                Bitmap bitmap = getBitmap(characterId);
 ////                                addItem(createSolarSystem(systemID, shipKills, podKills, name, securityStatus));
-                              addItem(createSolarSystem("testID", 5, 12, "testname", "-2.998"));
 
-//                            }
-//
-//                        } catch (SAXException e) {
-//                            e.printStackTrace();
-//                        }
-//                    } catch (ParserConfigurationException e) {
-//                        e.printStackTrace();
+                            }
+                            Map<Integer, Integer> sortedMap = new HashMap<Integer, Integer>();
+                            sortedMap = Constants.sortByValue(idKills);
+
+                            Iterator it = sortedMap.entrySet().iterator();
+                            int j = 0;
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry)it.next();
+                                String systemId = pair.getKey().toString();
+                                SystemData data = getSystemData(systemId);
+                                addItem(createSolarSystem(systemId, Integer.parseInt(pair.getValue().toString()), idPodKills.get(Integer.parseInt(systemId)), data.name, data.securityStatus));
+                                it.remove();
+                                if (j == 24) break;
+                            }
+
+                        } catch (SAXException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    }
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+//                    String line;
+//                    while((line = reader.readLine()) != null){
+//                        builder.append(line);
 //                    }
-////                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-////                    String line;
-////                    while((line = reader.readLine()) != null){
-////                        builder.append(line);
-////                    }
-//                } else {
-//                }
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+                } else {
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return "Executed";
         }
