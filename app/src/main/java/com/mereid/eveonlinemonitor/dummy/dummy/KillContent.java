@@ -218,7 +218,7 @@ public class KillContent {
                                 String shipKill = system.getAttribute("shipKills");
                                 int shipKills = Integer.parseInt(shipKill);
                                 int systemId = Integer.parseInt(system.getAttribute("solarSystemID"));
-                                if (shipKills < 1) continue;
+                                if (shipKills < 5) continue;
                                 idKills.put(systemId, shipKills);
                                 idPodKills.put(systemId, Integer.parseInt(system.getAttribute("podKills")));
 //                                String characterId = character.getAttribute("characterID");

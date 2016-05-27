@@ -65,8 +65,8 @@ public class DummyContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    public DummyItem createDummyItem(String name, String id, String corporation, int index, Bitmap bitmap) {
-        return new DummyItem(name, id, corporation, index, bitmap);
+    public DummyItem createDummyItem(String name, String id, String corporation, int index, Bitmap bitmap, String isk) {
+        return new DummyItem(name, id, corporation, index, bitmap, isk);
     }
 
     /**
@@ -76,17 +76,17 @@ public class DummyContent {
         public final String id;
         public final String content;
         public final String details;
-        public String isk;
+        public String isk = "";
         public int userDataIndex;
         public Bitmap charBitmap;
         public int charInitialized = 0;
 
-        public DummyItem(String name, String characterId, String corp, int index, Bitmap bitmap) {
+        public DummyItem(String name, String characterId, String corp, int index, Bitmap bitmap, String isk) {
             this.id = /*"Character: " +*/ name;
             this.details = /*"Corporation: " +*/ characterId;
             this.content = /*"Character id: " +*/ corp;
             this.userDataIndex = index;
-            this.isk = "";
+            this.isk = isk;
             this.charBitmap = bitmap;
         }
 

@@ -92,16 +92,18 @@ public class CharacterDetailFragment extends Fragment {
                 }
             }
 
-            String isk = "0.00";
-            try {
-                isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
+            if (mItem.isk.length() == 0) {
+                String isk = "0.00";
+                try {
+                    isk = new CharacterData().execute(mItem.details, "balance", Integer.toString(mItem.userDataIndex)).get();
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                mItem.SetIsk(isk);
             }
-            mItem.SetIsk(isk);
         }
     }
 
