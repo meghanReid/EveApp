@@ -1,10 +1,14 @@
 package com.mereid.eveonlinemonitor.dummy.dummy;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import com.mereid.eveonlinemonitor.Constants;
+import com.mereid.eveonlinemonitor.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,10 +59,10 @@ public class KillContent {
 
     public static int initializedSystem = 0;
 
-    public void Init()
+    public void Init(Context context)
     {
         if (initializedSystem == 0) {
-            new LongOperation().execute("");
+            new LongOperation(context).execute("");
         }
     };
 
@@ -105,6 +109,11 @@ public class KillContent {
     }
 
     private class LongOperation extends AsyncTask<String, Void, String> {
+        Context context;
+
+        public LongOperation(Context context) {
+            this.context = context;
+        }
 
         public class SystemData {
             public final String name;
@@ -130,36 +139,58 @@ public class KillContent {
         {
             SystemData data;
             String name = "";
-            double status = 0.00;
-            String myurl = "https://crest-tq.eveonline.com/solarsystems/"+systemID+"/";
-            URL url = null;
-            int response = -1;
-            try {
-                url = new URL(myurl);
-                String result;
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
+            double status = -999;
+
+            SharedPreferences sharedPref = this.context.getSharedPreferences(
+                    this.context.getString(R.string.keySysId_valueName_file), Context.MODE_PRIVATE);
+
+            if (sharedPref.contains(systemID))
+            {
+                SharedPreferences sharedPreferences = this.context.getSharedPreferences(
+                        this.context.getString(R.string.keySysId_valuesecStatus_file), Context.MODE_PRIVATE);
+                name = sharedPref.getString(systemID, "");
+                status = sharedPreferences.getFloat(systemID, -99.99f);
+            }
+            else {
+
+                String myurl = "https://crest-tq.eveonline.com/solarsystems/" + systemID + "/";
+                URL url = null;
+                int response = -1;
                 try {
-                    conn.setRequestMethod("GET");
-                } catch (ProtocolException e) {
+                    url = new URL(myurl);
+                    String result;
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    try {
+                        conn.setRequestMethod("GET");
+                    } catch (ProtocolException e) {
+                        e.printStackTrace();
+                    }
+                    conn.setDoInput(true);
+                    // Starts the query
+                    conn.connect();
+                    response = conn.getResponseCode();
+                    if (response == 200) {
+                        InputStream stream = conn.getInputStream();
+                        result = Constants.convertStreamToString(stream);
+                        JSONObject systemObject = new JSONObject(result);
+                        name = systemObject.getString("name");
+                        status = systemObject.getDouble("securityStatus");
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString(systemID, name);
+                        editor.commit();
+                        SharedPreferences sharedPreferences = this.context.getSharedPreferences(
+                                this.context.getString(R.string.keySysId_valuesecStatus_file), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editorSecStatus = sharedPreferences.edit();
+                        editorSecStatus.putFloat(systemID, (float) status);
+                        editorSecStatus.commit();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                conn.setDoInput(true);
-                // Starts the query
-                conn.connect();
-                response = conn.getResponseCode();
-                if(response == 200){
-                    InputStream stream = conn.getInputStream();
-                    result = Constants.convertStreamToString(stream);
-                    JSONObject systemObject = new JSONObject(result);
-                    name = systemObject.getString("name");
-                    status = systemObject.getDouble("securityStatus");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
             data = new SystemData(name, status);
             return data;

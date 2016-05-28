@@ -193,8 +193,6 @@ public class Splash extends Activity {
         protected void onPostExecute(String s) {
             Splash.this.splashShown = true;
             dummy.initialized = 1;
-            KillContent killContent = new KillContent();
-            killContent.Init();
             Intent mainClass = new Intent(Splash.this, CharacterListActivity.class);
             Splash.this.startActivity(mainClass);
             Splash.this.finish();

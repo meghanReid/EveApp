@@ -3,4 +3,6 @@
     <string name="title_character_detail">Character Detail</string>
     <string name="title_solarsystem_list">SolarSystems</string>
     <string name="title_solarsystem_detail">SolarSystem Detail</string>
+    <string name="keySysId_valueName_file">com.mereid.eveonlinemonitor.name</string>
+    <string name="keySysId_valuesecStatus_file">com.mereid.eveonlinemonitor.security</string>
 </resources>
